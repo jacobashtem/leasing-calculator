@@ -15,8 +15,10 @@ import {
 import { Input } from "@/components/ui/input";
 
 const props = defineProps({
-type: { type: String, default: () => [], required: true },
+  type: { type: String, default: () => [], required: true },
 });
+
+const emit = defineEmits(['calculationResults']);
 
 const currentYear = new Date().getFullYear();
 const formSchema = toTypedSchema(
@@ -30,8 +32,8 @@ const formSchema = toTypedSchema(
       .int({ message: "Wpisana wartość musi być liczbą całkowitą." })
       .gt(0, "Wpisana wartość nie może być mniejsza lub równa zero.")
       .lte(currentYear, `Rok produkcji nie może być nowszy niż ${currentYear}`)
-      .gte(2019, 'Samochodów starszych niż rocznik 2019 nie obsługujemy.')
-      .safe({message: 'Wpisana liczba jest zbyt duża.'}),
+      .gte(2019, "Samochodów starszych niż rocznik 2019 nie obsługujemy.")
+      .safe({ message: "Wpisana liczba jest zbyt duża." }),
     carValue: z
       .number({
         required_error: "Pole jest obowiązkowe. ",
@@ -40,19 +42,21 @@ const formSchema = toTypedSchema(
       })
       .int({ message: "Wpisana wartość musi być liczbą całkowitą." })
       .gt(0, "Wpisana wartość nie może być mniejsza lub równa zero.")
-      .safe({message: 'Wpisana liczba jest zbyt duża.'}),
-      drivePlus: z.boolean().optional(),
+      .safe({ message: "Wpisana liczba jest zbyt duża." }),
+    drivePlus: z.boolean().optional(),
   })
 );
 const form = useForm({
   validationSchema: formSchema,
   initialValues: {
-    drivePlus: true
-  }
+    drivePlus: true,
+  },
 });
-
-const onSubmit = form.handleSubmit((values) => {
-  console.log("Form submitted!", values);
+const { error, loading, result, calculateLeasingFee } = useLeasingCalculator();
+const onSubmit = form.handleSubmit(async (values) => {
+  let obj = { ...values, calculatorType: props.type };
+  await calculateLeasingFee(obj);
+  emit('calculationResults', result.value);
 });
 </script>
 
@@ -69,7 +73,7 @@ const onSubmit = form.handleSubmit((values) => {
     </FormField>
     <FormField v-slot="{ componentField }" name="carValue">
       <FormItem>
-        <FormLabel>Wartość samochodu w {{type}}</FormLabel>
+        <FormLabel>Wartość samochodu w {{ type }}</FormLabel>
         <FormControl>
           <Input
             type="number"
@@ -86,7 +90,7 @@ const onSubmit = form.handleSubmit((values) => {
       name="drivePlus"
     >
       <FormItem
-        class=" mt-4 flex flex-row items-start gap-x-3 space-y-0 rounded-md p-4"
+        class="mt-4 flex flex-row items-start gap-x-3 space-y-0 rounded-md p-4"
       >
         <FormControl>
           <Checkbox :checked="value" @update:checked="handleChange" />

@@ -1,0 +1,10 @@
+/* global.css */
+@font-face {
+    font-family: "Outfit";
+    src: local("outfit"), url("/assets/fonts/outfit/outfit-regular.woff2") format("truetype");
+  }
+  
+  html {
+    font-family: Outfit, system-ui, sans-serif;
+  }
+  

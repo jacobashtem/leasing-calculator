@@ -1,8 +1,8 @@
 <template>
-  <Tabs default-value="netto" class="w-[400px] mx-auto">
+  <Tabs default-value="netto" class="w-[260px] xxs:w-[280px] xs:w-[400px] mx-auto">
     <TabsList class="grid w-full grid-cols-2">
-      <TabsTrigger value="netto"> Kalkulator dla przedsiębiorcy </TabsTrigger>
-      <TabsTrigger value="brutto"> Kalkulator dla konsumenta </TabsTrigger>
+      <TabsTrigger value="netto"> Przedsiębiorca </TabsTrigger>
+      <TabsTrigger value="brutto"> Konsument </TabsTrigger>
     </TabsList>
     <TabsContent value="netto">
       <Card>
